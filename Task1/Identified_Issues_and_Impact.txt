@@ -1,0 +1,30 @@
+Code Review and Debugging
+
+Identified Issues and there Impact
+
+1.	Missing Error Handling 
+Impact : Any database error or required field is missing from request ,the application will crash with KeyError and poor user experience.
+
+2.	Lack of Input validation
+Impact : given code directly uses input without checking its type or formate.this could lead to database error .
+
+3.	Two different commit for relative task
+Impact :if the Inventory commit fails ,the product will still be in database but not in Inventory record.
+This will lead to inconsistent state of data.
+
+4.	Missing validation for missing values
+Impact:If the missing data is required key like name , there will be Key Error.
+
+5.	No Http status code returned
+Impcat:at each stage of handling there should be status retuen such as 200 Ok , 201 created etc.
+
+6.	Missing validation for unique values
+Impact:there are unique keys asuch as SKU in this given code should be unique within in bussines logic. This will lwad to a databse error ,incorrect inventory tracing for multiple products sharing same SKU.
+
+
+
+Main Fixe Applied:
+1.Removed double commit
+2.Added rollback to cleanup failed transactions.
+3.Status code added for better api communication
+4.Input validation to ensure data integrity.
