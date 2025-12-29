@@ -1,0 +1,72 @@
+Database Design 
+Task1:
+Database design using SQL DDL
+CREATE TABLE Companies(
+	ComapnyID INT PRIMARY KEY,
+	CompanyNAME  varchar(255) NOT NULL
+);
+CREATE TABLE Warehouse(
+    WarehouseID INT PRIMARY KEY,
+    WarehouseName VARCHAR(255) NOT NULL,
+    CompanyID INT NOT NULL,
+    FOREIGN KEY (CompanyID) REFERNCES Companies(CompanyID)
+);
+REATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    ProductType ENUM('Single', 'Bundle') NOT NULL 
+);
+
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(255) NOT NULL 
+);
+
+CREATE TABLE ProductSuppliers (
+    ProductID INT NOT NULL,
+    SupplierID INT NOT NULL,
+    PRIMARY KEY (ProductID, SupplierID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
+);
+
+CREATE TABLE WarehouseInventory (
+    WarehouseID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
+    PRIMARY KEY (WarehouseID, ProductID),
+    FOREIGN KEY (WarehouseID) REFERENCES Warehouses(WarehouseID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE InventoryTransactions (
+    TransactionID INT PRIMARY KEY AUTO_INCREMENT,
+    WarehouseID INT NOT NULL,
+    ProductID INT NOT NULL,
+    QuantityChange INT NOT NULL,
+    TransactionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (WarehouseID) REFERENCES Warehouses(WarehouseID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE BundledProducts (
+    BundleProductID INT NOT NULL,
+    ContainedProductID INT NOT NULL,
+    QuantityInBundle INT NOT NULL CHECK (QuantityInBundle > 0),
+    PRIMARY KEY (BundleProductID, ContainedProductID),
+    FOREIGN KEY (BundleProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (ContainedProductID) REFERENCES Products(ProductID)
+);
+
+
+Task2: Indentified Gaps
+1.	How should supplier information be detailed?
+2.	Are there different types of inventory transactions and need to be saperated?
+3.	What are the specific constrains on quantites?
+  
+  
+Task3:Decision Explanation
+-WarehouseInventory TABLE : A composite primarykey and check constrain for non-negative quantites ensure data integrity for levels.
+-InventoryTransactions table :Auto incrimenting Id and TIMESTAMP for tracking chnages chronologically and uniquely.
+-BundledProducts:self-referancing may tio may relationship in products table handle Bundle requirement effectively
+-ProductSuppliers:many to many realationship between product and supplier handle by this table,as product can have multiple supplierand suppliercan provide multiple products.
